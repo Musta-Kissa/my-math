@@ -41,6 +41,7 @@ fn main() {
 | **Methods NxN** | ``identity()``<br>``scalar()``                                                                                                 |
 | **Utils**       | `construct_proj()`<br>`construct_camera_transform()`                                                                           |
 | **Impl's**      | `Deref`<br>`DerefMut`<br>`Mul<Matrix> for Matrix`<br>`Mul<Vec3> for Matrix`<br>`Mul<Vec4> for Matrix`<br> `Display for Matrix` |
+
 **Utils**
 - `construct_proj()` - constructs a projection matrix given the `near`, `far` plane, `fov`, and the aspect `ratio`
 - `construct_camera_transform()` - constructs a camera transformation matrix given a `camera_pos`, `up` direction and a `at` vector
