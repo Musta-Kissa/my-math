@@ -75,7 +75,7 @@ fn main() {
 ```
 #### What it provides
 ##### Macro
-It provides a macro `fr!(2,3)` that is a shorthand for `MyFraction::new(2,3)` 
+It provides a macro `fr!(2,3)` that is a shorthand for `Fraction::new(2,3)` 
 ##### Methods
 There are two public methods provided:
 - `as_f64()` that returns the approximation of the fraction as a `f64` type
@@ -85,51 +85,51 @@ This type provides implementations for these Traits:
 
 The `$type` stands for all of these types: `usize, i8, i16, i32, i64, i128, u8, u16, u32, u64, u128`
 ```Rust 
-impl Sub<MyFraction> for MyFraction {...}
-impl Sub<$type> for MyFraction {...}
-impl Sub<MyFraction> for $type {...}
+impl Sub<Fraction> for Fraction {...}
+impl Sub<$type> for Fraction {...}
+impl Sub<Fraction> for $type {...}
 
-impl Add<MyFraction> for MyFraction {...}
-impl Add<$type> for MyFraction {...}
-impl Add<MyFraction> for $type {...}
+impl Add<Fraction> for Fraction {...}
+impl Add<$type> for Fraction {...}
+impl Add<Fraction> for $type {...}
 
-impl Mul<MyFraction> for MyFraction {...}
-impl Mul<$type> for MyFraction {...}
-impl Mul<MyFraction> for $type {...}
+impl Mul<Fraction> for Fraction {...}
+impl Mul<$type> for Fraction {...}
+impl Mul<Fraction> for $type {...}
 
-impl Div<MyFraction> for MyFraction {...}
-impl Div<MyFraction> for $type {...}
-impl Div<$type> for MyFraction {...}
+impl Div<Fraction> for Fraction {...}
+impl Div<Fraction> for $type {...}
+impl Div<$type> for Fraction {...}
 
-impl SubAssign for MyFraction {...}
-impl AddAssign for MyFraction {...}
-impl MulAssign for MyFraction {...}
-impl DivAssign for MyFraction {...}
+impl SubAssign for Fraction {...}
+impl AddAssign for Fraction {...}
+impl MulAssign for Fraction {...}
+impl DivAssign for Fraction {...}
 
-impl SubAssign<$type> for MyFraction {...}
-impl AddAssign<$type> for MyFraction {...}
-impl MulAssign<$type> for MyFraction {...}
-impl DivAssign<$type> for MyFraction {...}
+impl SubAssign<$type> for Fraction {...}
+impl AddAssign<$type> for Fraction {...}
+impl MulAssign<$type> for Fraction {...}
+impl DivAssign<$type> for Fraction {...}
 
-impl PartialEq for MyFraction {...}
-impl PartialOrd for MyFraction {...}
-impl Ord for MyFraction {...}
+impl PartialEq for Fraction {...}
+impl PartialOrd for Fraction {...}
+impl Ord for Fraction {...}
 
-impl PartialEq<$type> for MyFraction {...}
-impl PartialOrd<$type> for MyFraction {...}
-impl PartialEq<MyFraction> for $type {...}
-impl PartialOrd<MyFraction> for $type {...}
+impl PartialEq<$type> for Fraction {...}
+impl PartialOrd<$type> for Fraction {...}
+impl PartialEq<Fraction> for $type {...}
+impl PartialOrd<Fraction> for $type {...}
 
-impl From<$type> for MyFraction {...}
+impl From<$type> for Fraction {...}
 
-impl Display for MyFraction {...}
+impl Display for Fraction {...}
 ```
 #### Examples
 ```rust
 use my_math::fraction::*;
 
 fn main() {
-    let mut fr = MyFraction::new(7, 3);
+    let mut fr = Fraction::new(7, 3);
     println!("{fr}"); //(7/3)
 
     println!("{}", fr.as_f64());   //2.33333333333
