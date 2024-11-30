@@ -26,18 +26,17 @@ use my_math::matrix::*;
 
 fn main() {
 	let mat = Matrix::<3,3>::new(vec![2.,3.,4.,
-									  5.,6.,7.,
-									  9.,0.,1.]);
+				  	  5.,6.,7.,
+				  	  9.,0.,1.]);
 	// OR
 	let mat = new_mat!(2,3,[1.,2.,3.,4.,5.,6.]);
 
 	println!("{}", mat * 3.);
 }
 ```
-
-
-| **Methods**     | ``new()``<br>``new_zero()``                                                                                                    |
+| ---- | ---- | 
 | --------------- | ------------------------------------------------------------------------------------------------------------------------------ |
+| **Methods**     | ``new()``<br>``new_zero()``                                                                                                    |
 | **Methods NxN** | ``identity()``<br>``scalar()``                                                                                                 |
 | **Utils**       | `construct_proj()`<br>`construct_camera_transform()`                                                                           |
 | **Impl's**      | `Deref`<br>`DerefMut`<br>`Mul<Matrix> for Matrix`<br>`Mul<Vec3> for Matrix`<br>`Mul<Vec4> for Matrix`<br> `Display for Matrix` |
@@ -59,9 +58,9 @@ It Provides the following vector types:
 ------
 
 ### Quaterions
-
-| **Methods**     | `new()` <br> `conjugate()`       |
+| ---- | ---- | 
 | --------------- | -------------------------------- |
+| **Methods**     | `new()` <br> `conjugate()`       |
 | **Impl's**      | `Mul<Quaternion> for Quaternion` |
 
 -----
