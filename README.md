@@ -5,7 +5,6 @@ This is a collection of math utilities that i made for my projects
 Cargo.toml
 ```Toml
 [dependencies]
-minifb = "0.27.0"
 my_math = { path = "../my-math" }
 ```
 src/main.rs
