@@ -15,7 +15,7 @@ macro_rules! new_mat {
 
 #[derive(Clone, Copy)]
 pub struct Matrix<const ROW: usize, const COL: usize> {
-    data: [[f64; COL]; ROW],
+    pub data: [[f64; COL]; ROW],
 }
 
 impl<const ROW: usize, const COL: usize> Matrix<ROW, COL> {
