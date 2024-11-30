@@ -57,14 +57,12 @@ It Provides the following vector types:
 | **Vec4**  | ----       | `new()`                                                                                                           | ``Div<f64> for Vec4``<br>``Mul<Vec4> for Matrix<4, 4> ``                                                                                                       |
 
 ------
+
 ### Quaterions
-**Methods**:
-```
-new()
-conjugate()
-```
-**Impl's**:
-`Mul<Quaternion> for Quaternion`
+
+| **Methods**     | `new()` <br> `conjugate()`       |
+| --------------- | -------------------------------- |
+| **Impl's**      | `Mul<Quaternion> for Quaternion` |
 
 -----
 ### Fractions
