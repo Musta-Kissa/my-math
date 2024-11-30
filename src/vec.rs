@@ -94,10 +94,6 @@ impl Vec3 {
         println!("rotating z: {}",deg);
         *self = rot_mat * (*self);
     }
-    pub fn rot_axis(&mut self, deg: f64, axis: Vec3){
-        let out = axis.dot(*self) * axis + axis.cross(*self) * f64::sin(deg / 180. * PI) + axis * axis.dot(*self) * ( 1. - f64::cos(deg / 180. * PI));
-        *self = out;
-    }
     /// takes in a deg and a normalized axis vector 
     pub fn rot_quat(&mut self, deg: f64, axis: Vec3) {
         let deg_rad = deg / 180. * PI;

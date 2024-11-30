@@ -14,6 +14,7 @@ impl Quaternion {
             w,v,
         }
     }
+    /// Works only if the Quaternion is normalized
     pub fn conjugate(&self) -> Self {
         Quaternion::new(self.w , self.v * -1.)
     }
