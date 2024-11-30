@@ -1,5 +1,5 @@
 ## Description 
-This is a collection of math utilities that i made for my projects
+This is a collection of math utilities that i made for my projects. It has Matrices, Vectors, Fractions and Quaterions.
 
 ### Usage
 Cargo.toml
