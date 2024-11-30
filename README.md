@@ -66,7 +66,7 @@ It Provides the following vector types:
 ### Fractions
 #### How to use
 ```rust
-use my_fraction::*;
+use my_math::fraction::*;
 
 fn main() {
     println!("{}",fr!(2,3));
