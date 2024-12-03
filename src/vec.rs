@@ -102,6 +102,9 @@ impl Vec3 {
         let out_vec_quat = rot_quat * vec_quat * rot_quat.conjugate();
         *self = vec3!(out_vec_quat.v.x,out_vec_quat.v.y,out_vec_quat.v.z);
     }
+    pub fn norm(&self) -> Vec3 {
+        *self / self.mag()
+    }
 }
 impl Add<Vec3> for Vec3 {
     type Output = Vec3;
