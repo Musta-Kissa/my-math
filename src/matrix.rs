@@ -79,9 +79,9 @@ pub fn construct_proj(near: f64, far: f64, fov: f64, ratio: f64) -> Matrix<4, 4>
 
 use crate::vec::Vec3;
 pub fn construct_camera_transform(camera_pos: Vec3, up: Vec3, at: Vec3) -> Matrix<4, 4> {
-    let w = (camera_pos - at) / (camera_pos - at).mag();
+    let w = (camera_pos - at).norm();
     // negate the u vec if using a left hand system. Dont if using a right handed system
-    let u = w.cross(up) / -w.cross(up).mag();
+    let u = w.cross(up).norm() * -1.;
     // in a right hand coordinate system it would be w.cross(u)
     let v = u.cross(w);
 
@@ -90,7 +90,7 @@ pub fn construct_camera_transform(camera_pos: Vec3, up: Vec3, at: Vec3) -> Matri
                                 u.x, u.y, u.z, -camera_pos.dot(u),
                                 v.x, v.y, v.z, -camera_pos.dot(v),
                                 w.x, w.y, w.z, -camera_pos.dot(w),
-                                0.,  0.,  0.,        1.        ]);
+                                0.,  0.,  0.,        1.        ]) * -1.;
     return camera_transform;
 }
 
@@ -108,6 +108,20 @@ impl<const ROW: usize, const COL: usize> DerefMut for Matrix<ROW, COL> {
         &mut self.data
     }
 }
+impl<const ROW: usize, const COL: usize> Mul<f64> for Matrix<ROW, COL> {
+    type Output = Matrix<ROW,COL>;
+
+    fn mul(self, rhs: f64) -> Self::Output {
+        let mut out = Matrix::new_zero();
+        for r in 0..ROW {
+            for c in 0..COL {
+                out[r][c] = self[r][c] * rhs;
+            }
+        }
+        out
+    }
+}
+
 impl<const ROW: usize, const COL: usize, const ROW_RHS: usize, const COL_RHS: usize>
     Mul<Matrix<ROW_RHS, COL_RHS>> for Matrix<ROW, COL>
 {

@@ -17,6 +17,31 @@ pub struct IVec2 {
     pub x: i64,
     pub y: i64,
 }
+impl IVec2 {
+    pub fn cross(&self, rhs: Self) -> i64 {
+        self.x * rhs.y - self.y * rhs.x
+    }
+}
+impl Add<IVec2> for IVec2 {
+    type Output = IVec2;
+
+    fn add(self, rhs: IVec2) -> Self::Output {
+        IVec2 {
+            x: self.x - rhs.x,
+            y: self.y - rhs.y,
+        }
+    }
+}
+impl Sub<IVec2> for IVec2 {
+    type Output = IVec2;
+
+    fn sub(self, rhs: IVec2) -> Self::Output {
+        IVec2 {
+            x: self.x - rhs.x,
+            y: self.y - rhs.y,
+        }
+    }
+}
 
 #[derive(Debug)]
 pub struct Vec2 {
@@ -26,6 +51,9 @@ pub struct Vec2 {
 impl Vec2 {
     pub fn new(x: f64, y: f64) -> Self {
         Vec2 { x, y}
+    }
+    pub fn cross(&self, rhs: Self) -> f64 {
+        self.x * rhs.y - self.y * rhs.x
     }
 }
 
@@ -104,6 +132,9 @@ impl Vec3 {
     }
     pub fn norm(&self) -> Vec3 {
         *self / self.mag()
+    }
+    pub fn to_vec4(&self) -> Vec4 {
+        Vec4::new(self.x, self.y, self.z, 1.0)
     }
 }
 impl Add<Vec3> for Vec3 {
@@ -184,8 +215,23 @@ impl Vec4 {
     pub fn new(x: f64, y: f64, z: f64, w: f64) -> Self {
         Vec4 { x, y, z, w }
     }
+    pub fn to_vec3(&self) -> Vec3 {
+        Vec3 { x: self.x, y: self.y, z: self.z }
+    }
 }
 
+impl Mul<f64> for Vec4 {
+    type Output = Vec4;
+    
+    fn mul(self, rhs: f64) -> Self::Output {
+        Self {
+            x: self.x * rhs,
+            y: self.y * rhs,
+            z: self.z * rhs,
+            w: self.w * rhs,
+        }
+    }
+}
 impl Div<f64> for Vec4 {
     type Output = Vec4;
     
