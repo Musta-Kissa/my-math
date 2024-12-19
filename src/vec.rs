@@ -74,6 +74,14 @@ impl Vec3 {
     pub fn new(x: f64, y: f64, z: f64) -> Self {
         Self { x, y, z }
     }
+    pub fn from_slice(slice: &[f64]) -> Vec3 {
+        match slice.len() {
+            1 => Vec3::new(slice[0], 1., 1.),
+            2 => Vec3::new(slice[0], slice[1], 1.),
+            3 => Vec3::new(slice[0], slice[1], slice[2]),
+            _ => Vec3::new(1., 1., 1.),
+        }
+    }
     pub fn mag(&self) -> f64 {
         let x = self.x;
         let y = self.y;
@@ -217,6 +225,15 @@ impl Vec4 {
     }
     pub fn to_vec3(&self) -> Vec3 {
         Vec3 { x: self.x, y: self.y, z: self.z }
+    }
+    pub fn from_slice(slice: &[f64]) -> Vec4 {
+        match slice.len() {
+            1 => Vec4::new(slice[0], 1., 1., 1.),
+            2 => Vec4::new(slice[0], slice[1], 1., 1.),
+            3 => Vec4::new(slice[0], slice[1], slice[2], 1.),
+            4 => Vec4::new(slice[0], slice[1], slice[2], slice[3]),
+            _ => Vec4::new(1., 1., 1., 1.),
+        }
     }
 }
 

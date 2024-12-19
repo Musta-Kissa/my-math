@@ -55,44 +55,54 @@ impl<const N: usize> Matrix<N, N> {
     }
 }
 
-pub fn construct_proj(near: f64, far: f64, fov: f64, ratio: f64) -> Matrix<4, 4> {
+use crate::vec::Vec3;
+pub fn look_at_lh(camera_pos: Vec3, at: Vec3, up: Vec3) -> Matrix<4,4> {
+
+    let dir = camera_pos - at;
+
+    let f = dir.norm();
+    let s = f.cross(up).norm();
+    let u = s.cross(f);
+
+    Matrix::<4,4>::new(vec![
+         s.x, s.y, s.z, -camera_pos.dot(s),
+         u.x, u.y, u.z, -camera_pos.dot(u),
+         f.x, f.y, f.z, -camera_pos.dot(f),
+         0.,  0.,  0.,   1.,
+    ])
+}
+
+pub fn proj_mat_gl(fov: f64, ratio: f64, near: f64,far: f64) -> Matrix<4,4> {
     use std::f64::consts::PI;
     let fov_rad = fov / 180. * PI;
-
     let tan_half_fov = f64::tan(fov_rad / 2.);
 
-    let top = tan_half_fov * near;
-    let right = near * ratio * tan_half_fov;
+    Matrix::<4,4>::new(vec![
+        1./(tan_half_fov*ratio),    0., 0., 0.,
+        0., 1./tan_half_fov,         0., 0.,
+        0., 0., (far+near)/(near-far),(2.*near*far)/(near-far),
+        0., 0.,  -1.   , 0.,
+    ])
+    //vec![ n/r,  0.,    0.,       0.,
+           //0., n/t,    0.,       0.,
+           //0.,  0., f/(f-n), -(f*n)/(f-n),
+           //0.,  0.,    1.,       0.,     ]);
+}
+pub fn proj_mat_wgpu(fov: f64, ratio: f64, near: f64,far: f64) -> Matrix<4,4> {
+    use std::f64::consts::PI;
+    let fov_rad = fov / 180. * PI;
+    let tan_half_fov = f64::tan(fov_rad / 2.);
 
-    let n = near;
-    let f = far;
-    let r = right;
-    let t = top;
-    #[rustfmt::skip]
-    let perspective_proj_mat = Matrix::<4,4>::new(
-        vec![ n/r,  0.,    0.,       0.,
-               0., n/t,    0.,       0.,
-               0.,  0., f/(f-n), -(f*n)/(f-n),
-               0.,  0.,    1.,       0.,     ]);
-    return perspective_proj_mat;
+    let h_c = (far+near)/((near-far)*2.);
+    let h_d = (near*far)/(near-far);
+    Matrix::<4,4>::new(vec![
+        1./(tan_half_fov*ratio),    0., 0., 0.,
+        0., 1./tan_half_fov,         0., 0.,
+        0., 0., h_c, h_d,
+        0., 0., h_c -1.   , h_d,
+    ])
 }
 
-use crate::vec::Vec3;
-pub fn construct_camera_transform(camera_pos: Vec3, up: Vec3, at: Vec3) -> Matrix<4, 4> {
-    let w = (camera_pos - at).norm();
-    // negate the u vec if using a left hand system. Dont if using a right handed system
-    let u = w.cross(up).norm() * -1.;
-    // in a right hand coordinate system it would be w.cross(u)
-    let v = u.cross(w);
-
-    #[rustfmt::skip]
-    let camera_transform = Matrix::<4,4>::new(vec![
-                                u.x, u.y, u.z, -camera_pos.dot(u),
-                                v.x, v.y, v.z, -camera_pos.dot(v),
-                                w.x, w.y, w.z, -camera_pos.dot(w),
-                                0.,  0.,  0.,        1.        ]) * -1.;
-    return camera_transform;
-}
 
 // ------------------- Traint Impls -----------------------------
 
