@@ -7,6 +7,9 @@ use std::ops::{Add, AddAssign, Div, DivAssign, Mul, MulAssign, Sub, SubAssign};
 
 #[macro_export]
 macro_rules! fr {
+    ($num:expr) => {
+        Fraction::new($num, 1)
+    };
     ($num:expr,$den:expr) => {
         Fraction::new($num, $den)
     };
@@ -64,6 +67,9 @@ impl Fraction {
         }
         let whole_part = (self.numerator - rem) / self.denominator;
         format!("{whole_part}({rem}/{})", self.denominator)
+    }
+    pub fn abs(&self) -> f64 {
+        self.denominator.abs() as f64 / self.numerator as f64
     }
 }
 

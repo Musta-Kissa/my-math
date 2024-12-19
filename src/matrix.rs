@@ -103,7 +103,6 @@ pub fn proj_mat_wgpu(fov: f64, ratio: f64, near: f64,far: f64) -> Matrix<4,4> {
     ])
 }
 
-
 // ------------------- Traint Impls -----------------------------
 
 impl<const ROW: usize, const COL: usize> Deref for Matrix<ROW, COL> {
@@ -216,6 +215,119 @@ impl<const ROW: usize, const COL: usize> Display for Matrix<ROW, COL> {
             write!(f, " ]\n")?;
         }
         Ok(())
+    }
+}
+
+use crate::fraction::Fraction;
+use crate::fr;
+
+#[derive(Clone, Copy)]
+pub struct MatrixFr<const ROW: usize, const COL: usize> {
+    pub data: [[Fraction; COL]; ROW],
+}
+impl<const ROW: usize, const COL: usize> MatrixFr<ROW, COL> {
+    pub fn new(data: Vec<Fraction>) -> Self {
+        assert_eq!(
+            ROW * COL,
+            data.len(),
+            "Vector len doest match the matrix dimentions | vec len: {}, matrix dimentions: {}x{}", data.len() , ROW,COL
+        );
+
+        let mut tmp = MatrixFr::<ROW, COL>::new_zero();
+        for (i, chunk) in data.chunks(COL).enumerate() {
+            tmp[i].copy_from_slice(chunk);
+        }
+        tmp
+    }
+    fn new_zero() -> Self {
+        Self {
+            data: [[fr!(0); COL]; ROW],
+        }
+    }
+    pub fn solve(&mut self) -> [Fraction;ROW] {
+        assert_eq!(ROW + 1,COL,"You can only solve a Nx(N+1) matrix");
+        for i in 0..ROW{
+            // Find the pivot element
+            let mut max_row = i;
+            for k in i + 1..ROW{
+                if self[k][i].abs() > self[max_row][i].abs() {
+                    max_row = k;
+                }
+            }
+
+            // Swap rows if necessary
+            self.swap(i, max_row);
+
+            // Check if the pivot is zero (if so, the matrix is singular)
+            if self[i][i] == 0 {
+                panic!("singular matrix"); // No unique solution
+            }
+
+            // Eliminate below the pivot
+            for j in i + 1..ROW {
+                let factor = self[j][i] / self[i][i];
+                for k in i..ROW + 1 {
+                    self[j][k] = self[j][k] - factor * self[i][k];
+                }
+            }
+        }
+
+        // Back substitution
+        let mut solution = [fr!(0); ROW];
+
+        for i in (0..ROW).rev() {
+            solution[i] = self[i][ROW] / self[i][i];
+            for j in 0..i {
+                self[j][ROW] = self[j][ROW] - self[j][i] * solution[i];
+            }
+        }
+        solution
+    }
+}
+impl<const ROW: usize, const COL: usize> Deref for MatrixFr<ROW, COL> {
+    type Target = [[Fraction; COL]; ROW];
+
+    fn deref(&self) -> &Self::Target {
+        &self.data
+    }
+}
+impl<const ROW: usize, const COL: usize> DerefMut for MatrixFr<ROW, COL> {
+    fn deref_mut(&mut self) -> &mut Self::Target {
+        &mut self.data
+    }
+}
+impl<const ROW: usize, const COL: usize> Mul<Fraction> for MatrixFr<ROW, COL> {
+    type Output = MatrixFr<ROW,COL>;
+
+    fn mul(self, rhs: Fraction) -> Self::Output {
+        let mut out = MatrixFr::new_zero();
+        for r in 0..ROW {
+            for c in 0..COL {
+                out[r][c] = self[r][c] * rhs;
+            }
+        }
+        out
+    }
+}
+
+impl<const ROW: usize, const COL: usize, const ROW_RHS: usize, const COL_RHS: usize>
+    Mul<MatrixFr<ROW_RHS, COL_RHS>> for MatrixFr<ROW, COL>
+{
+    type Output = MatrixFr<ROW, COL_RHS>;
+
+    fn mul(self, rhs: MatrixFr<ROW_RHS, COL_RHS>) -> Self::Output {
+        let mut mat: Self::Output = MatrixFr::<ROW, COL_RHS>::new_zero();
+
+        for row in 0..ROW {
+            for col in 0..COL_RHS {
+                let mut sum: Fraction = fr!(0);
+                for i in 0..COL {
+                    sum += self[row][i] * rhs[i][col];
+                }
+                mat[row][col] = sum;
+            }
+        }
+        mat
     }
 }
 
