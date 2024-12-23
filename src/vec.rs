@@ -71,7 +71,7 @@ pub struct Vec3 {
     pub z: f64,
 }
 impl Vec3 {
-    pub fn new(x: f64, y: f64, z: f64) -> Self {
+    pub const fn new(x: f64, y: f64, z: f64) -> Self {
         Self { x, y, z }
     }
     pub fn from_slice(slice: &[f64]) -> Vec3 {
@@ -141,8 +141,8 @@ impl Vec3 {
     pub fn norm(&self) -> Vec3 {
         *self / self.mag()
     }
-    pub fn to_vec4(&self) -> Vec4 {
-        Vec4::new(self.x, self.y, self.z, 1.0)
+    pub fn to_vec4(&self,w:f64) -> Vec4 {
+        Vec4::new(self.x, self.y, self.z, w)
     }
 }
 impl Add<Vec3> for Vec3 {
@@ -210,6 +210,13 @@ impl Mul<Vec3> for Matrix<3, 3> {
             out.z = self[2][0] * rhs.x + self[2][1] * rhs.y + self[2][2] * rhs.z;
         out
     }
+}
+
+#[macro_export]
+macro_rules! vec4 {
+    ($x:expr,$y:expr,$z:expr,$w:expr) => {
+        Vec4::new($x,$y,$z,$w)
+    };
 }
 
 #[derive(Debug,Copy,Clone)]
