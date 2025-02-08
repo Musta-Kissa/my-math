@@ -71,6 +71,7 @@ pub struct Vec3 {
     pub z: f64,
 }
 impl Vec3 {
+    pub const UP:Vec3 = Vec3 { x: 0. , y: 1. , z: 0. };
     pub const fn new(x: f64, y: f64, z: f64) -> Self {
         Self { x, y, z }
     }
