@@ -1,15 +1,14 @@
-use core::f64;
 use std::ops::Mul;
 
 use super::vec::Vec3;
 
 #[derive(Clone, Copy)]
 pub struct Quaternion {
-    pub w: f64,
+    pub w: f32,
     pub v: Vec3,
 }
 impl Quaternion {
-    pub fn new(w: f64,v:Vec3) -> Self{
+    pub fn new(w: f32,v:Vec3) -> Self{
         Quaternion {
             w,v,
         }

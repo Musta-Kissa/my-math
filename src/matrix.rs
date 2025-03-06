@@ -1,4 +1,4 @@
-use core::f64;
+use core::f32;
 use std::fmt;
 use std::fmt::{Display, Formatter};
 use std::ops::{Deref, DerefMut, Mul};
@@ -15,11 +15,11 @@ macro_rules! new_mat {
 
 #[derive(Clone, Copy)]
 pub struct Matrix<const ROW: usize, const COL: usize> {
-    pub data: [[f64; COL]; ROW],
+    pub data: [[f32; COL]; ROW],
 }
 
 impl<const ROW: usize, const COL: usize> Matrix<ROW, COL> {
-    pub fn new(data: Vec<f64>) -> Self {
+    pub fn new(data: Vec<f32>) -> Self {
         assert_eq!(
             ROW * COL,
             data.len(),
@@ -32,10 +32,19 @@ impl<const ROW: usize, const COL: usize> Matrix<ROW, COL> {
         }
         tmp
     }
-    fn new_zero() -> Self {
+    pub fn new_zero() -> Self {
         Self {
             data: [[0.0; COL]; ROW],
         }
+    }
+    pub fn to_opengl(self) -> Vec<f32> {
+        let mut out = vec![];
+        for col in 0..ROW {
+            for row in 0..COL {
+                out.push(self.data[row][col] as f32);
+            }
+        }
+        out
     }
 }
 impl<const N: usize> Matrix<N, N> {
@@ -46,7 +55,7 @@ impl<const N: usize> Matrix<N, N> {
         }
         return mat;
     }
-    pub fn scalar(factor: f64) -> Self {
+    pub fn scalar(factor: f32) -> Self {
         let mut mat = Self::new_zero();
         for i in 0..N {
             mat[i][i] = factor;
@@ -72,10 +81,10 @@ pub fn look_at_lh(camera_pos: Vec3, at: Vec3, up: Vec3) -> Matrix<4,4> {
     ])
 }
 
-pub fn proj_mat_gl(fov: f64, ratio: f64, near: f64,far: f64) -> Matrix<4,4> {
-    use std::f64::consts::PI;
+pub fn proj_mat_gl(fov: f32, ratio: f32, near: f32,far: f32) -> Matrix<4,4> {
+    use std::f32::consts::PI;
     let fov_rad = fov / 180. * PI;
-    let tan_half_fov = f64::tan(fov_rad / 2.);
+    let tan_half_fov = f32::tan(fov_rad / 2.);
 
     Matrix::<4,4>::new(vec![
         1./(tan_half_fov*ratio),    0., 0., 0.,
@@ -83,30 +92,26 @@ pub fn proj_mat_gl(fov: f64, ratio: f64, near: f64,far: f64) -> Matrix<4,4> {
         0., 0., (far+near)/(near-far),(2.*near*far)/(near-far),
         0., 0.,  -1.   , 0.,
     ])
-    //vec![ n/r,  0.,    0.,       0.,
-           //0., n/t,    0.,       0.,
-           //0.,  0., f/(f-n), -(f*n)/(f-n),
-           //0.,  0.,    1.,       0.,     ]);
 }
-pub fn proj_mat_wgpu(fov: f64, ratio: f64, near: f64,far: f64) -> Matrix<4,4> {
-    use std::f64::consts::PI;
+pub fn proj_mat_wgpu(fov: f32, ratio: f32, near: f32,far: f32) -> Matrix<4,4> {
+    use std::f32::consts::PI;
     let fov_rad = fov / 180. * PI;
-    let tan_half_fov = f64::tan(fov_rad / 2.);
+    let tan_half_fov = f32::tan(fov_rad / 2.);
 
     let h_c = (far+near)/((near-far)*2.);
     let h_d = (near*far)/(near-far);
     Matrix::<4,4>::new(vec![
-        1./(tan_half_fov*ratio),    0., 0., 0.,
-        0., 1./tan_half_fov,         0., 0.,
-        0., 0., h_c, h_d,
-        0., 0., h_c -1.   , h_d,
+        1./(tan_half_fov*ratio),    0.,         0.,     0.,
+                0.,          1./tan_half_fov,   0.,     0.,
+                0.,                 0.,         h_c,    h_d,
+                0.,                 0.,         h_c-1., h_d,
     ])
 }
 
 // ------------------- Traint Impls -----------------------------
 
 impl<const ROW: usize, const COL: usize> Deref for Matrix<ROW, COL> {
-    type Target = [[f64; COL]; ROW];
+    type Target = [[f32; COL]; ROW];
 
     fn deref(&self) -> &Self::Target {
         &self.data
@@ -117,10 +122,10 @@ impl<const ROW: usize, const COL: usize> DerefMut for Matrix<ROW, COL> {
         &mut self.data
     }
 }
-impl<const ROW: usize, const COL: usize> Mul<f64> for Matrix<ROW, COL> {
+impl<const ROW: usize, const COL: usize> Mul<f32> for Matrix<ROW, COL> {
     type Output = Matrix<ROW,COL>;
 
-    fn mul(self, rhs: f64) -> Self::Output {
+    fn mul(self, rhs: f32) -> Self::Output {
         let mut out = Matrix::new_zero();
         for r in 0..ROW {
             for c in 0..COL {
@@ -141,7 +146,7 @@ impl<const ROW: usize, const COL: usize, const ROW_RHS: usize, const COL_RHS: us
 
         for row in 0..ROW {
             for col in 0..COL_RHS {
-                let mut sum: f64 = 0.0;
+                let mut sum: f32 = 0.0;
                 for i in 0..COL {
                     sum += self[row][i] * rhs[i][col];
                 }
