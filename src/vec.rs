@@ -43,7 +43,7 @@ impl Sub<IVec2> for IVec2 {
     }
 }
 
-#[derive(Debug)]
+#[derive(Copy,Clone,Debug)]
 pub struct Vec2 {
     pub x: f32,
     pub y: f32,
@@ -54,6 +54,55 @@ impl Vec2 {
     }
     pub fn cross(&self, rhs: Self) -> f32 {
         self.x * rhs.y - self.y * rhs.x
+    }
+    pub fn mag(&self) -> f32 {
+        let x = self.x;
+        let y = self.y;
+
+        f32::sqrt(x*x + y*y)
+    }
+    pub fn norm(&self) -> Vec2 {
+        *self / self.mag()
+    }
+}
+impl Div<f32> for Vec2 {
+    type Output = Vec2;
+    
+    fn div(self, rhs: f32) -> Self::Output {
+        Self {
+            x: self.x / rhs,
+            y: self.y / rhs,
+        }
+    }
+}
+impl Mul<f32> for Vec2 {
+    type Output = Vec2;
+
+    fn mul(self, rhs: f32) -> Self::Output {
+        let mut out = Vec2::new(0.,0.);
+            out.x = self.x * rhs;
+            out.y = self.y * rhs;
+        out
+    }
+}
+impl Mul<Vec2> for f32 {
+    type Output = Vec2;
+
+    fn mul(self, rhs: Vec2) -> Self::Output {
+        let mut out = Vec2::new(0.,0.);
+            out.x = self * rhs.x;
+            out.y = self * rhs.y;
+        out
+    }
+}
+impl Add<Vec2> for Vec2 {
+    type Output = Vec2;
+
+    fn add(self, rhs: Vec2) -> Self::Output {
+        Vec2 {
+            x: self.x + rhs.x,
+            y: self.y + rhs.y,
+        }
     }
 }
 
