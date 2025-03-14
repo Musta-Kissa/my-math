@@ -105,6 +105,34 @@ impl Add<Vec2> for Vec2 {
         }
     }
 }
+#[derive(Debug,Copy,Clone,PartialEq)]
+pub struct IVec3 {
+    pub x: i32,
+    pub y: i32,
+    pub z: i32,
+}
+impl IVec3 {
+    pub const ZERO: IVec3 = IVec3 { x: 0 , y: 0 , z: 0 };
+
+    pub const X:    IVec3 = IVec3 { x: 1 , y: 0 , z: 0 };
+    pub const NEG_X:IVec3 = IVec3 { x: -1 , y: 0 , z: 0 };
+    pub const Y:    IVec3 = IVec3 { x: 0 , y: 1 , z: 0 };
+    pub const NEG_Y:IVec3 = IVec3 { x: 0 , y: -1 , z: 0 };
+    pub const Z:    IVec3 = IVec3 { x: 0 , y: 0 , z: 1 };
+    pub const NEG_Z:IVec3 = IVec3 { x: 0 , y: 0 , z: -1 };
+
+    pub fn new(x:i32,y:i32,z:i32) -> Self {
+        IVec3{ x, y, z }
+    }
+}
+impl Into<Vec3> for IVec3 {
+    fn into(self) -> Vec3 {
+        Vec3 { x: self.x as f32, 
+               y: self.y as f32, 
+               z: self.z as f32
+        }
+    }
+}
 
 #[macro_export]
 macro_rules! vec3 {
@@ -124,6 +152,7 @@ pub struct Vec3 {
 }
 impl Vec3 {
     pub const UP:Vec3 = Vec3 { x: 0. , y: 1. , z: 0. };
+    pub const ZERO:Vec3 = Vec3 { x: 0. , y: 0. , z: 0. };
 
     pub const X:    Vec3 = Vec3 { x: 1. , y: 0. , z: 0. };
     pub const NEG_X:Vec3 = Vec3 { x: -1. , y: 0. , z: 0. };
@@ -155,43 +184,19 @@ impl Vec3 {
     pub fn dot(&self, rhs: Self) -> f32 {
         return self.x * rhs.x + self.y * rhs.y + self.z * rhs.z;
     }
-    /*
-    pub fn rot_x(&mut self, deg: f32) {
-        let deg_rad = deg / 180. * PI;
-        #[rustfmt::skip]
-        let rot_mat = Matrix::<3,3>::new(vec![
-            f32::cos(deg_rad), f32::sin(deg_rad),0.,
-            -f32::sin(deg_rad),  f32::cos(deg_rad),0.,
-            0.,0.,1.]);
-        println!("rotating x: {}",deg);
-        *self = rot_mat * (*self);
+    pub fn with_x(&self, x: f32) -> Self {
+        Vec3 { x, y: self.y, z: self.z }  
     }
-    pub fn rot_y(&mut self,deg: f32) {
-        let deg_rad = deg / 180. * PI;
-        #[rustfmt::skip]
-        let rot_mat = Matrix::<3,3>::new(vec![
-            f32::cos(deg_rad), 0.,-f32::sin(deg_rad),
-            0.,1.,0.,
-            f32::sin(deg_rad),  0.,f32::cos(deg_rad) ]);
-        println!("rotating y: {}",deg);
-        *self = rot_mat * (*self);
+    pub fn with_y(&self, y: f32) -> Self {
+        Vec3 { x: self.x , y, z: self.z }  
     }
-    pub fn rot_z(&mut self,deg: f32) {
-        let deg_rad = deg / 180. * PI;
-
-        #[rustfmt::skip]
-        let rot_mat = Matrix::<3,3>::new(vec![
-            1.,     0.,                 0.,
-            0., f32::cos(deg_rad), f32::sin(deg_rad),
-            0.,-f32::sin(deg_rad), f32::cos(deg_rad), ]);
-        println!("rotating z: {}",deg);
-        *self = rot_mat * (*self);
+    pub fn with_z(&self, z: f32) -> Self {
+        Vec3 { x: self.x , y: self.y, z }  
     }
-    */
     /// takes in a deg and a normalized axis vector 
     pub fn rot_quat(&mut self, deg: f32, axis: Vec3) {
         let deg_rad = deg / 180. * PI;
-        let rot_quat = Quaternion::new(f32::cos(deg_rad),axis * f32::sin(deg_rad));
+        let rot_quat = Quaternion::new(f32::cos(deg_rad/2.),axis * f32::sin(deg_rad/2.));
         let vec_quat = Quaternion::new(0.,*self);
         let out_vec_quat = rot_quat * vec_quat * rot_quat.conjugate();
         *self = vec3!(out_vec_quat.v.x,out_vec_quat.v.y,out_vec_quat.v.z);
