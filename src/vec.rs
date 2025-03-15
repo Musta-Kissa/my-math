@@ -18,6 +18,9 @@ pub struct IVec2 {
     pub y: i32,
 }
 impl IVec2 {
+    pub fn new(x: i32, y: i32) -> Self {
+        IVec2 { x, y }
+    }
     pub fn cross(&self, rhs: Self) -> i32 {
         self.x * rhs.y - self.y * rhs.x
     }
