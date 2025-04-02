@@ -108,6 +108,12 @@ impl Add<Vec2> for Vec2 {
         }
     }
 }
+#[macro_export]
+macro_rules! ivec3 {
+    ($x:expr,$y:expr,$z:expr) => {
+        IVec3 { x: $x, y: $y, z: $z }
+    };
+}
 #[derive(Debug,Copy,Clone,PartialEq)]
 pub struct IVec3 {
     pub x: i32,
@@ -126,6 +132,39 @@ impl IVec3 {
 
     pub fn new(x:i32,y:i32,z:i32) -> Self {
         IVec3{ x, y, z }
+    }
+}
+impl Mul<i32> for IVec3 {
+    type Output = IVec3;
+
+    fn mul(self, rhs: i32) -> Self::Output {
+        IVec3 {
+            x: self.x * rhs,
+            y: self.y * rhs,
+            z: self.z * rhs,
+        }
+    }
+}
+impl Add<IVec3> for IVec3 {
+    type Output = IVec3;
+
+    fn add(self, rhs: IVec3) -> Self::Output {
+        IVec3 {
+            x: self.x + rhs.x,
+            y: self.y + rhs.y,
+            z: self.z + rhs.z,
+        }
+    }
+}
+impl Sub<IVec3> for IVec3 {
+    type Output = IVec3;
+
+    fn sub(self, rhs: IVec3) -> Self::Output {
+        IVec3 {
+            x: self.x - rhs.x,
+            y: self.y - rhs.y,
+            z: self.z - rhs.z,
+        }
     }
 }
 impl Into<Vec3> for IVec3 {
