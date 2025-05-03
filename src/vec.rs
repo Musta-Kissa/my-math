@@ -46,6 +46,12 @@ impl Sub<IVec2> for IVec2 {
     }
 }
 
+#[macro_export]
+macro_rules! vec2 {
+    ($x:expr,$y:expr) => {
+        Vec2 { x: $x, y: $y }
+    };
+}
 #[derive(Copy,Clone,Debug)]
 pub struct Vec2 {
     pub x: f32,
@@ -111,7 +117,7 @@ impl Add<Vec2> for Vec2 {
 #[macro_export]
 macro_rules! ivec3 {
     ($x:expr,$y:expr,$z:expr) => {
-        IVec3 { x: $x, y: $y, z: $z }
+        IVec3 { x: $x as i32, y: $y as i32, z: $z as i32 }
     };
 }
 #[derive(Debug,Copy,Clone,PartialEq)]
@@ -133,6 +139,33 @@ impl IVec3 {
     pub fn new(x:i32,y:i32,z:i32) -> Self {
         IVec3{ x, y, z }
     }
+
+    pub fn modulo(&self, rhs: i32) -> Self {
+        IVec3 {
+            x: (self.x%rhs + rhs) % rhs,
+            y: (self.y%rhs + rhs) % rhs,
+            z: (self.z%rhs + rhs) % rhs,
+        }
+    }
+    pub fn as_vec3(&self) -> Vec3 {
+        Vec3::new(self.x as f32,  self.y as f32, self.z as f32)
+    }
+    pub fn div_floor(&self, rhs: i32) -> Self {
+        fn div_floor(a:i32,b:i32) -> i32 {
+            let quotient = a / b;
+            let remainder = a % b;
+            if remainder != 0 && ((a < 0) ^ (b < 0)) {
+                quotient - 1
+            } else {
+                quotient
+            }
+        }
+        IVec3 {
+            x: div_floor(self.x,rhs),
+            y: div_floor(self.y,rhs),
+            z: div_floor(self.z,rhs),
+        }
+    }
 }
 impl Mul<i32> for IVec3 {
     type Output = IVec3;
@@ -142,6 +175,17 @@ impl Mul<i32> for IVec3 {
             x: self.x * rhs,
             y: self.y * rhs,
             z: self.z * rhs,
+        }
+    }
+}
+impl Add<i32> for IVec3 {
+    type Output = IVec3;
+
+    fn add(self, rhs: i32) -> Self::Output {
+        IVec3 {
+            x: self.x + rhs,
+            y: self.y + rhs,
+            z: self.z + rhs,
         }
     }
 }
@@ -164,6 +208,17 @@ impl Sub<IVec3> for IVec3 {
             x: self.x - rhs.x,
             y: self.y - rhs.y,
             z: self.z - rhs.z,
+        }
+    }
+}
+impl Div<i32> for IVec3 {
+    type Output = IVec3;
+
+    fn div(self, rhs: i32) -> Self::Output {
+        IVec3 {
+            x: self.x / rhs,
+            y: self.y / rhs,
+            z: self.z / rhs,
         }
     }
 }
