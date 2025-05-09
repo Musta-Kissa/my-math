@@ -236,8 +236,8 @@ macro_rules! vec3 {
     ($x:expr,$y:expr,$z:expr) => {
         Vec3::new($x,$y,$z)
     };
-    ($arr:expr) => {
-        Vec3::from_slice($arr);
+    ($val:expr) => {
+        Vec3::new($val,$val,$val);
     }
 }
 
@@ -327,6 +327,17 @@ impl Sub<Vec3> for Vec3 {
         }
     }
 }
+impl Div<Vec3> for f32 {
+    type Output = Vec3;
+    
+    fn div(self, rhs: Vec3) -> Self::Output {
+        Vec3 {
+            x: self / rhs.x,
+            y: self / rhs.y,
+            z: self / rhs.z,
+        }
+    }
+}
 impl Div<f32> for Vec3 {
     type Output = Vec3;
     
@@ -338,6 +349,17 @@ impl Div<f32> for Vec3 {
         }
     }
 }
+impl Add<f32> for Vec3 {
+    type Output = Vec3;
+
+    fn add(self, rhs: f32) -> Self::Output {
+        let mut out = Vec3::new(0.,0.,0.);
+            out.x = self.x + rhs;
+            out.y = self.y + rhs;
+            out.z = self.z + rhs;
+        out
+    }
+}
 impl Mul<f32> for Vec3 {
     type Output = Vec3;
 
@@ -347,6 +369,17 @@ impl Mul<f32> for Vec3 {
             out.y = self.y * rhs;
             out.z = self.z * rhs;
         out
+    }
+}
+impl Mul<Vec3> for Vec3 {
+    type Output = Vec3;
+
+    fn mul(self, rhs: Vec3) -> Self::Output {
+        Vec3 {
+            x: self.x * rhs.x,
+            y: self.y * rhs.y,
+            z: self.z * rhs.z,
+        }
     }
 }
 impl Mul<Vec3> for f32 {

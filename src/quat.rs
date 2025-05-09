@@ -1,6 +1,7 @@
 use std::ops::Mul;
 
-use super::vec::Vec3;
+use crate::vec::Vec3;
+use crate::vec3;
 
 #[derive(Clone, Copy)]
 pub struct Quaternion {
@@ -17,6 +18,9 @@ impl Quaternion {
     pub fn conjugate(&self) -> Self {
         Quaternion::new(self.w , self.v * -1.)
     }
+    pub fn xyz(&self) -> Vec3 {
+        vec3!(self.v.x,self.v.y,self.v.z)
+    }
 }
 impl Mul<Quaternion> for Quaternion {
     type Output = Quaternion;
@@ -31,4 +35,11 @@ impl Mul<Quaternion> for Quaternion {
             }
         }
     }
+}
+
+/// Assuming the quaternion is normalized
+pub fn rot_vec_by_quat(vec: Vec3,quat:&Quaternion) -> Vec3 {
+    let vec_quat = Quaternion::new(0.,vec);
+    let out_vec_quat = (*quat) * vec_quat * quat.conjugate();
+    out_vec_quat.xyz()
 }
